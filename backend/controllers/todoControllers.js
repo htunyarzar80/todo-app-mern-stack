@@ -7,9 +7,11 @@ exports.getTodos = async (req, res, next) => {
       success: true,
       todos
     });
+    // console.log("todos===>",todos)
   } catch (error) {
     next(error);
   }
+  
 };
 
 module.exports.createTodo = async (req, res, next) => {
