@@ -111,7 +111,9 @@ export const todoUpdateAction = (id, updatedTodoData) => async (dispatch) => {
       type: UPDATE_TODO_SUCCESS,
       payload: data,
     });
+    console.log("updated Data====>",data)
     toast.success("Successfully Updated");
+    dispatch(todoLoadAction());
   } catch (error) {
     dispatch({
       type: UPDATE_TODO_FAIL,

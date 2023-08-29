@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box,
+  div,
   Paper,
   Typography,
   Button,
@@ -9,18 +9,21 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Card,
 } from "@mui/material";
 import { DataGrid, GridToolbar, gridClasses } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import EditNoteRoundedIcon from "@mui/icons-material/EditNoteRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import { deleteTodoAction, todoLoadAction } from "../redux/action/todoAction";
+import CreateModal from "./CreateModal";
+import UpdateModal from "./UpdateModal";
 
-const Todo = () => {
+const Todo = (params) => {
   const dispatch = useDispatch();
   const [openDialog, setOpenDialog] = useState(false);
+
   const [selectedTodoId, setSelectedTodoId] = useState(null);
 
   useEffect(() => {
@@ -31,7 +34,10 @@ const Todo = () => {
   console.log("Todos====>", todos);
   let data = [];
   data = todos !== undefined && todos.length > 0 ? todos : [];
-  const numberedData = data.map((row, index) => ({ number: index + 1, ...row }));
+  const numberedData = data.map((row, index) => ({
+    number: index + 1,
+    ...row,
+  }));
 
   const handleDeleteConfirmation = (e, todo_id) => {
     e.preventDefault();
@@ -54,60 +60,63 @@ const Todo = () => {
 
   const columns = [
     {
-        field: "number",
-        headerName: "No",
-        width: 60,
-      },
+      field: "number",
+      headerName: "No",
+      width: 60,
+    },
     {
       field: "text",
       headerName: "Text",
       width: 150,
     },
-
     {
       field: "Actions",
       width: 200,
-      renderCell: (values) => (
-        <Box
-          sx={{
+      renderCell: (params) => (
+        <div
+          style={{
             display: "flex",
             justifyContent: "space-between",
             width: "170px",
           }}
         >
-          <Button variant="contained">
-            <Link style={{ color: "dark", textDecoration: "none" }}>
-              {<EditNoteRoundedIcon />}
-            </Link>
-          </Button>
-
+          <UpdateModal id={params.row._id} initialText={params.row.text} />
           <Button
-            onClick={(e) => handleDeleteConfirmation(e, values.row._id)}
+            onClick={(e) => handleDeleteConfirmation(e, params.row._id)}
             variant="contained"
             color="error"
           >
             {<DeleteForeverRoundedIcon />}
           </Button>
-        </Box>
+        </div>
       ),
     },
   ];
+  
 
   return (
     <>
-       <Box p={3}>
-        <Typography variant="h4" sx={{ pb: 3 }}>
+      <div className="text-center justify-content-center todo p-5 container-fluid"
+        style={{
+          width:"80vh",
+          direction:"column"
+     
+        }}
+      >
+        
+        <div style={{ paddingBottom:"30px" , justifyContent: "space-between",display:"flex" }}>
+        <Typography variant="h4" >
           Todo App ...
         </Typography>
-        <Box sx={{ pb: 2, display: "flex", justifyContent: "flex-end" }}>
-          {/* Add your buttons or components here */}
-        </Box>
+         <CreateModal />
+
+        </div>
 
         <Paper>
-          <Box sx={{ height: 400, width: "100%" }}>
+          <div >
             <DataGrid
               getRowId={(row) => row._id}
-              sx={{
+              sx={{pt:5,p:2,
                 "& .MuiTablePagination-displayedRows": {
                   color: "dark",
                 },
@@ -125,7 +134,7 @@ const Todo = () => {
               rowsPerPageOptions={[5]}
               slots={{ toolbar: GridToolbar }}
             />
-          </Box>
+          </div>
         </Paper>
         <Dialog open={openDialog} onClose={handleCloseDialog}>
           <DialogTitle
@@ -156,7 +165,8 @@ const Todo = () => {
             </Button>
           </DialogActions>
         </Dialog>
-      </Box>
+      </div>
+      {/* {modal && <CreateModal onClose={handleCloseModal} />} */}
     </>
   );
 };
